@@ -1,0 +1,6 @@
+#!/usr/bin/with-contenv bash
+
+mkdir -p /config/acme-certs/$LETSENCRYPT_DOMAIN
+ln -s ../fullchain.pem /config/acme-certs/$LETSENCRYPT_DOMAIN/
+ln -s ../private-key /config/acme-certs/$LETSENCRYPT_DOMAIN/
+
