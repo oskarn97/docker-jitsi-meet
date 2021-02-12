@@ -14,6 +14,7 @@ http_default_host = "{{ .Env.XMPP_DOMAIN }}"
 {{ $JWT_AUTH_TYPE := .Env.JWT_AUTH_TYPE | default "token" }}
 {{ $JWT_TOKEN_AUTH_MODULE := .Env.JWT_TOKEN_AUTH_MODULE | default "token_verification" }}
 {{ $ENABLE_LOBBY := .Env.ENABLE_LOBBY | default "0" | toBool }}
+{{ $ENABLE_UVS_SYNC_POWER_LEVELS := .Env.UVS_SYNC_POWER_LEVELS | default "0" | toBool }}
 
 {{ $ENABLE_XMPP_WEBSOCKET := .Env.ENABLE_XMPP_WEBSOCKET | default "1" | toBool }}
 {{ $PUBLIC_URL := .Env.PUBLIC_URL | default "https://localhost:8443" -}}
@@ -43,6 +44,16 @@ cross_domain_websocket = { "{{ join "\",\"" (splitList "," $XMPP_CROSS_DOMAINS) 
 cross_domain_bosh = { "{{ join "\",\"" (splitList "," $XMPP_CROSS_DOMAINS) }}" }
 {{ end }}
 
+{{ if .Env.TURNCREDENTIALS_HOST }}
+turncredentials_secret = "{{ .Env.TURNCREDENTIALS_SECRET }}";
+
+turncredentials = {
+  { type = "stun", host = "{{ .Env.TURNCREDENTIALS_HOST }}", port = "{{ .Env.TURNCREDENTIALS_PORT }}" },
+  { type = "turn", host = "{{ .Env.TURNCREDENTIALS_HOST }}", port = "{{ .Env.TURNCREDENTIALS_PORT }}", transport = "udp" },
+  { type = "turns", host = "{{ .Env.TURNCREDENTIALS_HOST }}", port = "{{ .Env.TURNCREDENTIALS_PORT }}", transport = "tcp" }
+};
+{{ end }}
+
 VirtualHost "{{ .Env.XMPP_DOMAIN }}"
 {{ if $ENABLE_AUTH }}
   {{ if eq $AUTH_TYPE "jwt" }}
@@ -60,6 +71,13 @@ VirtualHost "{{ .Env.XMPP_DOMAIN }}"
     allow_unencrypted_plain_auth = true
   {{ else if eq $AUTH_TYPE "internal" }}
     authentication = "internal_hashed"
+  {{ else if eq $AUTH_TYPE "matrix_user_verification" }}
+    authentication = "matrix_user_verification"
+    app_id = "meet.cyan.logineo.de"
+    uvs_base_url = "{{ .Env.UVS_BASE_URL }}"
+    {{ if $ENABLE_UVS_SYNC_POWER_LEVELS }}
+    uvs_sync_power_levels = true
+    {{ end }}
   {{ end }}
 {{ else }}
     -- https://github.com/jitsi/docker-jitsi-meet/pull/502#issuecomment-619146339
@@ -95,6 +113,9 @@ VirtualHost "{{ .Env.XMPP_DOMAIN }}"
         {{ if and $ENABLE_AUTH (eq $AUTH_TYPE "ldap") }}
         "auth_cyrus";
         {{end}}
+        {{ if .Env.TURNCREDENTIALS_HOST }}
+        "turncredentials";
+        {{ end }}
     }
 
     {{ if $ENABLE_LOBBY }}
@@ -160,6 +181,9 @@ Component "{{ .Env.XMPP_MUC_DOMAIN }}" "muc"
         {{ end }}
         {{ if and $ENABLE_AUTH (eq $AUTH_TYPE "jwt") }}
         "{{ $JWT_TOKEN_AUTH_MODULE }}";
+        {{ end }}
+        {{ if and (eq $AUTH_TYPE "matrix_user_verification") $ENABLE_UVS_SYNC_POWER_LEVELS }}
+        "matrix_power_sync";
         {{ end }}
     }
     muc_room_cache_size = 1000

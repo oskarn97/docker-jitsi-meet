@@ -1,6 +1,8 @@
 #!/usr/bin/with-contenv bash
 
-mkdir -p /config/acme-certs/$LETSENCRYPT_DOMAIN
-ln -s ../fullchain.pem /config/acme-certs/$LETSENCRYPT_DOMAIN/
-ln -s ../private-key /config/acme-certs/$LETSENCRYPT_DOMAIN/
+if [ -n "$LETSENCRYPT_DOMAIN" ]; then
+   mkdir -p /config/acme-certs/$LETSENCRYPT_DOMAIN
+   ([[ -e "/config/acme-certs/$LETSENCRYPT_DOMAIN/fullchain.pem" ]] || [[ -L "blupp" ]]) || ln -s ../../cert.pem /config/acme-certs/$LETSENCRYPT_DOMAIN/fullchain.pem
+   ([[ -e "/config/acme-certs/$LETSENCRYPT_DOMAIN/key.pem" ]] || [[ -L "blupp" ]]) || ln -s ../../key.pem /config/acme-certs/$LETSENCRYPT_DOMAIN/key.pem
+fi
 

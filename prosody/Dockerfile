@@ -12,9 +12,13 @@ RUN \
       luarocks \
       git \
       gcc \
+      make \
+      m4 \
+    && git config --global url.https://github.com/.insteadOf git://github.com/ \
     && luarocks install cyrussasl 1.1.0-1 \
     && luarocks install net-url 0.9-1 \
-    && luarocks install luajwtjitsi 2.0-0
+    && luarocks install luajwtjitsi 2.0-0 \
+    && luarocks install http 0.4-0 
 
 FROM ${JITSI_REPO}/base
 
@@ -45,6 +49,10 @@ RUN \
     && rm -rf /tmp/pkg /var/cache/apt
 
 RUN patch -d /usr/lib/prosody/modules/muc -p0 < /prosody-plugins/muc_owner_allow_kick.patch
+
+RUN wget -P /usr/lib/prosody/modules \
+    https://raw.githubusercontent.com/matrix-org/prosody-mod-auth-matrix-user-verification/fc908d7339537856bd0051a42028e24f884c7569/mod_auth_matrix_user_verification.lua \
+    https://raw.githubusercontent.com/matrix-org/prosody-mod-auth-matrix-user-verification/1ac23292916e96619ca03042b9e582dae0a815af/mod_matrix_power_sync.lua
 
 COPY rootfs/ /
 
