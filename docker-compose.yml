@@ -184,8 +184,7 @@ services:
         image: jitsi/jicofo:stable-5390-3
         restart: ${RESTART_POLICY}
         volumes:
-            - ${CONFIG}/prosody/config:/config:Z
-            - ${CONFIG}/prosody/prosody-plugins-custom:/prosody-plugins-custom:Z
+            - ${CONFIG}/jicofo:/config:Z
         environment:
             - AUTH_TYPE
             - BRIDGE_AVG_PARTICIPANT_STRESS
