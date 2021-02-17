@@ -35,7 +35,7 @@
 {{ $TESTING_CAP_SCREENSHARE_BITRATE := .Env.TESTING_CAP_SCREENSHARE_BITRATE | default "1" -}}
 {{ $XMPP_DOMAIN := .Env.XMPP_DOMAIN -}}
 {{ $XMPP_RECORDER_DOMAIN := .Env.XMPP_RECORDER_DOMAIN -}}
-
+{{ $DISABLE_THIRD_PARTY_REQUESTS := .Env.DISABLE_THIRD_PARTY_REQUESTS | default "false" | toBool -}}
 
 // Video configuration.
 //
@@ -304,3 +304,5 @@ if (!config.testing.hasOwnProperty('octo')) config.testing.octo = {};
 
 config.testing.capScreenshareBitrate = {{ $TESTING_CAP_SCREENSHARE_BITRATE }};
 config.testing.octo.probability = {{ $TESTING_OCTO_PROBABILITY }};
+
+config.disableThirdPartyRequests = {{ $DISABLE_THIRD_PARTY_REQUESTS }};
