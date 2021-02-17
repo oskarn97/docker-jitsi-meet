@@ -93,4 +93,11 @@ if [[ ! -f /config/interface_config.js ]]; then
             -e "s#'closedcaptions', ##" \
             /config/interface_config.js
     fi
+
+    if [ -n "$DISABLED_TOOLBAR_BUTTONS" ]; then
+        PATTERN=$(echo $DISABLED_TOOLBAR_BUTTONS | sed "s/[ ,]\+/\\\|/g")
+        sed -i \
+            "s#'\($PATTERN\)'\\s*,\?#/* \0 */#g" \
+            /config/interface_config.js        
+    fi
 fi

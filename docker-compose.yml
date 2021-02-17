@@ -99,6 +99,7 @@ services:
             - XMPP_RECORDER_DOMAIN
             - TOKEN_AUTH_URL
             - DISABLE_THIRD_PARTY_REQUESTS
+            - DISABLED_TOOLBAR_BUTTONS
         networks:
             meet.jitsi:
                 aliases:
