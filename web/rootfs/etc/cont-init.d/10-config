@@ -100,4 +100,10 @@ if [[ ! -f /config/interface_config.js ]]; then
             "s#'\($PATTERN\)'\\s*,\?#/* \0 */#g" \
             /config/interface_config.js        
     fi
+
+    if [[ $DISABLE_VIDEO_BACKGROUND -eq 1 ]]; then
+        sed -i \
+            "s/\(DISABLE_VIDEO_BACKGROUND\\s*:\\s*\)[^,]\+/\1true/g" \
+            /config/interface_config.js
+    fi
 fi

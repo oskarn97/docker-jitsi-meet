@@ -100,6 +100,7 @@ services:
             - TOKEN_AUTH_URL
             - DISABLE_THIRD_PARTY_REQUESTS
             - DISABLED_TOOLBAR_BUTTONS
+            - DISABLE_VIDEO_BACKGROUND
         networks:
             meet.jitsi:
                 aliases:
