@@ -2,7 +2,7 @@ FORCE_REBUILD ?= 0
 JITSI_RELEASE ?= stable
 JITSI_BUILD ?= lnrw-stable-5390-3
 JITSI_REPO ?= jitsi
-JITSI_SERVICES ?= web prosody
+JITSI_SERVICES ?= web prosody jvb
 
 BUILD_ARGS := --build-arg JITSI_REPO=$(JITSI_REPO) --build-arg JITSI_RELEASE=$(JITSI_RELEASE)
 ifeq ($(FORCE_REBUILD), 1)

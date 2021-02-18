@@ -22,6 +22,10 @@ tpl /defaults/jvb.conf > /config/jvb.conf
 
 if [[ ! -f /config/logging.properties ]]; then
     cp /defaults/logging.properties /config
+
+    if [ -n "$JVB_LOG_LEVEL" ]; then
+        sed "s/\(\\.level\\s*=\\s*\).*/\1${JVB_LOG_LEVEL^^}/g" -i /config/logging.properties
+    fi
 fi
 
 chown -R jvb:jitsi /config

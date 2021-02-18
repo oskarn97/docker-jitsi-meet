@@ -230,7 +230,7 @@ services:
 
     # Video bridge
     jvb:
-        image: jitsi/jvb:stable-5390-3
+        image: jitsi/jvb:lnrw-stable-5390-3
         restart: ${RESTART_POLICY}
         ports:
             - '${JVB_PORT}:${JVB_PORT}/udp'
@@ -255,6 +255,7 @@ services:
             - JVB_WS_SERVER_ID
             - PUBLIC_URL
             - TZ
+            - JVB_LOG_LEVEL
         depends_on:
             - prosody
         networks:
