@@ -106,4 +106,10 @@ if [[ ! -f /config/interface_config.js ]]; then
             "s/\(DISABLE_VIDEO_BACKGROUND\\s*:\\s*\)[^,]\+/\1true/g" \
             /config/interface_config.js
     fi
+
+    if [[ $HIDE_INVITE_MORE_HEADER -eq 1 ]]; then
+        sed -i \
+            "s/\(HIDE_INVITE_MORE_HEADER\\s*:\\s*\)[^,]\+/\1true/g" \
+            /config/interface_config.js
+    fi
 fi
