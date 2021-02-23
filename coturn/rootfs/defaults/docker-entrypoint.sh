@@ -14,6 +14,8 @@ exec turnserver -c /config/turnserver.conf \
 --external-ip=${TURN_PUBLIC_IP} \
 --static-auth-secret=${TURN_SECRET} \
 --realm=${TURN_REALM} \
+--min-port=${TURN_RTP_MIN} \
+--max-port=${TURN_RTP_MAX} \
 --listening-ip=$(hostname -i) \
 --cli-password=NotReallyCliUs3d \
 --no-cli
