@@ -3,25 +3,25 @@ version: '3'
 services:
     # Frontend
     web:
-        image: jitsi/web:lnrw-stable-5390-3
-        restart: ${RESTART_POLICY}
+        image: ${JITSI_IMAGE:-jitsi/web:lnrw-stable-5390-3}
+        restart: ${RESTART_POLICY:-unless-stopped}
         ports:
-            - '${HTTP_PORT}:80'
-            - '${HTTPS_PORT}:443'
+            - '${HTTP_PORT:-80}:80'
+            - '${HTTPS_PORT:-443}:443'
         volumes:
-            - ${CONFIG}/web:/config:Z
-            - ${CONFIG}/transcripts:/usr/share/jitsi-meet/transcripts:Z
+            - ${SSL_CERT}:/config/keys/cert.crt
+            - ${SSL_PRIVATE_KEY}:/config/keys/cert.key
         environment:
             - ENABLE_LETSENCRYPT
-            - ENABLE_HTTP_REDIRECT
+            - ENABLE_HTTP_REDIRECT=${ENABLE_HTTP_REDIRECT:-1}
             - ENABLE_HSTS
-            - ENABLE_XMPP_WEBSOCKET
+            - ENABLE_XMPP_WEBSOCKET=${ENABLE_XMPP_WEBSOCKET:-0}
             - DISABLE_HTTPS
             - LETSENCRYPT_DOMAIN
             - LETSENCRYPT_EMAIL
             - LETSENCRYPT_USE_STAGING
             - PUBLIC_URL
-            - TZ
+            - TZ=${TZ:-UTC}
             - AMPLITUDE_ID
             - ANALYTICS_SCRIPT_URLS
             - ANALYTICS_WHITELISTED_EVENTS
@@ -54,7 +54,7 @@ services:
             - ENABLE_PREJOIN_PAGE
             - ENABLE_WELCOME_PAGE
             - ENABLE_CLOSE_PAGE
-            - ENABLE_RECORDING
+            - ENABLE_RECORDING=${ENABLE_RECORDING:-0}
             - ENABLE_REMB
             - ENABLE_REQUIRE_DISPLAY_NAME
             - ENABLE_SIMULCAST
@@ -69,7 +69,7 @@ services:
             - GOOGLE_ANALYTICS_ID
             - GOOGLE_API_APP_CLIENT_ID
             - INVITE_SERVICE_URL
-            - JICOFO_AUTH_USER
+            - JICOFO_AUTH_USER=${JICOFO_AUTH_USER:-focus}
             - MATOMO_ENDPOINT
             - MATOMO_SITE_ID
             - MICROSOFT_API_APP_CLIENT_ID
@@ -91,12 +91,12 @@ services:
             - START_VIDEO_MUTED
             - TESTING_CAP_SCREENSHARE_BITRATE
             - TESTING_OCTO_PROBABILITY
-            - XMPP_AUTH_DOMAIN
-            - XMPP_BOSH_URL_BASE
-            - XMPP_DOMAIN
-            - XMPP_GUEST_DOMAIN
-            - XMPP_MUC_DOMAIN
-            - XMPP_RECORDER_DOMAIN
+            - XMPP_AUTH_DOMAIN=${XMPP_AUTH_DOMAIN:-auth.meet.jitsi}
+            - XMPP_BOSH_URL_BASE=${XMPP_BOSH_URL_BASE:-http://xmpp.meet.jitsi:5280}
+            - XMPP_DOMAIN=${XMPP_DOMAIN:-meet.jitsi}
+            - XMPP_GUEST_DOMAIN=${XMPP_GUEST_DOMAIN:-guest.meet.jitsi}
+            - XMPP_MUC_DOMAIN=${XMPP_MUC_DOMAIN:-muc.meet.jitsi}
+            - XMPP_RECORDER_DOMAIN=${XMPP_RECORDER_DOMAIN:-recorder.meet.jitsi}
             - TOKEN_AUTH_URL
             - DISABLE_THIRD_PARTY_REQUESTS
             - DISABLED_TOOLBAR_BUTTONS
@@ -104,25 +104,22 @@ services:
         networks:
             meet.jitsi:
                 aliases:
-                    - ${XMPP_DOMAIN}
+                    - ${XMPP_DOMAIN:-meet.jitsi}
 
     # XMPP server
     prosody:
-        image: jitsi/prosody:lnrw-stable-5390-3
-        restart: ${RESTART_POLICY}
+        image: ${PROSODY_IMAGE:-jitsi/prosody:lnrw-stable-5390-3}
+        restart: ${RESTART_POLICY:-unless-stopped}
         expose:
             - '5222'
             - '5347'
             - '5280'
-        volumes:
-            - ${CONFIG}/prosody/config:/config:Z
-            - ${CONFIG}/prosody/prosody-plugins-custom:/prosody-plugins-custom:Z
         environment:
-            - AUTH_TYPE
-            - ENABLE_AUTH
+            - AUTH_TYPE=${AUTH_TYPE:-matrix_user_verification}
+            - ENABLE_AUTH=${ENABLE_AUTH:-1}
             - ENABLE_GUESTS
-            - ENABLE_LOBBY
-            - ENABLE_XMPP_WEBSOCKET
+            - ENABLE_LOBBY=${ENABLE_LOBBY:-1}
+            - ENABLE_XMPP_WEBSOCKET=${ENABLE_XMPP_WEBSOCKET:-0}
             - GLOBAL_MODULES
             - GLOBAL_CONFIG
             - LDAP_URL
@@ -138,26 +135,26 @@ services:
             - LDAP_TLS_CACERT_FILE
             - LDAP_TLS_CACERT_DIR
             - LDAP_START_TLS
-            - XMPP_DOMAIN
-            - XMPP_AUTH_DOMAIN
-            - XMPP_GUEST_DOMAIN
-            - XMPP_MUC_DOMAIN
-            - XMPP_INTERNAL_MUC_DOMAIN
+            - XMPP_DOMAIN=${XMPP_DOMAIN:-meet.jitsi}
+            - XMPP_AUTH_DOMAIN=${XMPP_AUTH_DOMAIN:-auth.meet.jitsi}
+            - XMPP_GUEST_DOMAIN=${XMPP_GUEST_DOMAIN:-guest.meet.jitsi}
+            - XMPP_MUC_DOMAIN=${XMPP_MUC_DOMAIN:-muc.meet.jitsi}
+            - XMPP_INTERNAL_MUC_DOMAIN=${XMPP_INTERNAL_MUC_DOMAIN:-internal-muc.meet.jitsi}
             - XMPP_MODULES
             - XMPP_MUC_MODULES
             - XMPP_INTERNAL_MUC_MODULES
-            - XMPP_RECORDER_DOMAIN
+            - XMPP_RECORDER_DOMAIN=${XMPP_RECORDER_DOMAIN:-recorder.meet.jitsi}
             - XMPP_CROSS_DOMAIN
             - JICOFO_COMPONENT_SECRET
-            - JICOFO_AUTH_USER
+            - JICOFO_AUTH_USER=${JICOFO_AUTH_USER:-focus}
             - JICOFO_AUTH_PASSWORD
-            - JVB_AUTH_USER
+            - JVB_AUTH_USER=${JVB_AUTH_USER:-jvb}
             - JVB_AUTH_PASSWORD
-            - JIGASI_XMPP_USER
+            - JIGASI_XMPP_USER=${JIGASI_XMPP_USER:-jigasi}
             - JIGASI_XMPP_PASSWORD
-            - JIBRI_XMPP_USER
+            - JIBRI_XMPP_USER=${JIBRI_XMPP_USER:-jibri}
             - JIBRI_XMPP_PASSWORD
-            - JIBRI_RECORDER_USER
+            - JIBRI_RECORDER_USER=${JIBRI_RECORDER_USER:-recorder}
             - JIBRI_RECORDER_PASSWORD
             - JWT_APP_ID
             - JWT_APP_SECRET
@@ -167,27 +164,25 @@ services:
             - JWT_ALLOW_EMPTY
             - JWT_AUTH_TYPE
             - JWT_TOKEN_AUTH_MODULE
-            - LOG_LEVEL
+            - LOG_LEVEL=${LOG_LEVEL:-debug}
             - PUBLIC_URL
-            - TZ
-            - UVS_BASE_URL
-            - UVS_SYNC_POWER_LEVELS
-            - TURNCREDENTIALS_SECRET
-            - TURNCREDENTIALS_HOST
-            - TURNCREDENTIALS_PORT 
+            - TZ=${TZ:-UTC}
+            - UVS_BASE_URL=${UVS_BASE_URL:-http://uvs.meet.jitsi:3000}
+            - UVS_SYNC_POWER_LEVELS=${UVS_SYNC_POWER_LEVELS:-1}
+            - TURNCREDENTIALS_SECRET=${TURN_SECRET}
+            - TURNCREDENTIALS_HOST=${TURN_PUBLIC_IP}
+            - TURNCREDENTIALS_PORT=${TURN_PORT:-5349}
         depends_on:
             - matrix-user-verification-service
         networks:
             meet.jitsi:
                 aliases:
-                    - ${XMPP_SERVER}
+                    - ${XMPP_SERVER:-xmpp.meet.jitsi}
 
     # Focus component
     jicofo:
-        image: jitsi/jicofo:stable-5390-3
-        restart: ${RESTART_POLICY}
-        volumes:
-            - ${CONFIG}/jicofo:/config:Z
+        image: ${JICOFO_IMAGE:-jitsi/jicofo:stable-5390-3}
+        restart: ${RESTART_POLICY:-unless-stopped}
         environment:
             - AUTH_TYPE
             - BRIDGE_AVG_PARTICIPANT_STRESS
@@ -197,10 +192,10 @@ services:
             - ENABLE_CODEC_VP8
             - ENABLE_CODEC_VP9
             - ENABLE_CODEC_H264
-            - ENABLE_RECORDING
+            - ENABLE_RECORDING=${ENABLE_RECORDING:-0}
             - ENABLE_SCTP
             - JICOFO_COMPONENT_SECRET
-            - JICOFO_AUTH_USER
+            - JICOFO_AUTH_USER=${JICOFO_AUTH_USER:-focus}
             - JICOFO_AUTH_PASSWORD
             - JICOFO_ENABLE_BRIDGE_HEALTH_CHECKS
             - JICOFO_CONF_INITIAL_PARTICIPANT_WAIT_TIMEOUT
@@ -209,20 +204,20 @@ services:
             - JICOFO_SHORT_ID
             - JICOFO_RESERVATION_ENABLED 
             - JICOFO_RESERVATION_REST_BASE_URL 
-            - JIBRI_BREWERY_MUC
+            - JIBRI_BREWERY_MUC=${JIBRI_BREWERY_MUC:-jibribrewery}
             - JIBRI_REQUEST_RETRIES
-            - JIBRI_PENDING_TIMEOUT
-            - JIGASI_BREWERY_MUC
+            - JIBRI_PENDING_TIMEOUT=${JIBRI_PENDING_TIMEOUT:-90}
+            - JIGASI_BREWERY_MUC=${JIGASI_BREWERY_MUC:-jigasibrewery}
             - JIGASI_SIP_URI
-            - JVB_BREWERY_MUC
+            - JVB_BREWERY_MUC=${JVB_BREWERY_MUC:-jvbbrewery}
             - MAX_BRIDGE_PARTICIPANTS
             - OCTO_BRIDGE_SELECTION_STRATEGY
-            - TZ
-            - XMPP_DOMAIN
-            - XMPP_AUTH_DOMAIN
-            - XMPP_INTERNAL_MUC_DOMAIN
-            - XMPP_MUC_DOMAIN
-            - XMPP_SERVER
+            - TZ=${TZ:-UTC}
+            - XMPP_DOMAIN=${XMPP_DOMAIN:-meet.jitsi}
+            - XMPP_AUTH_DOMAIN=${XMPP_AUTH_DOMAIN:-auth.meet.jitsi}
+            - XMPP_INTERNAL_MUC_DOMAIN=${XMPP_INTERNAL_MUC_DOMAIN:-internal-muc.meet.jitsi}
+            - XMPP_MUC_DOMAIN=${XMPP_MUC_DOMAIN:-muc.meet.jitsi}
+            - XMPP_SERVER=${XMPP_SERVER:-xmpp.meet.jitsi}
         depends_on:
             - prosody
         networks:
@@ -230,31 +225,29 @@ services:
 
     # Video bridge
     jvb:
-        image: jitsi/jvb:lnrw-stable-5390-3
-        restart: ${RESTART_POLICY}
+        image: ${JVB_IMAGE:-jitsi/jvb:lnrw-stable-5390-3}
+        restart: ${RESTART_POLICY:-unless-stopped}
         ports:
-            - '${JVB_PORT}:${JVB_PORT}/udp'
-            - '${JVB_TCP_PORT}:${JVB_TCP_PORT}'
-        volumes:
-            - ${CONFIG}/jvb:/config:Z
+            - '${JVB_PORT:-10000}:${JVB_PORT:-10000}/udp'
+            - '${JVB_TCP_PORT:-4443}:${JVB_TCP_PORT:-4443}'
         environment:
             - DOCKER_HOST_ADDRESS
-            - XMPP_AUTH_DOMAIN
-            - XMPP_INTERNAL_MUC_DOMAIN
-            - XMPP_SERVER
-            - JVB_AUTH_USER
+            - XMPP_AUTH_DOMAIN=${XMPP_AUTH_DOMAIN:-auth.meet.jitsi}
+            - XMPP_INTERNAL_MUC_DOMAIN=${XMPP_INTERNAL_MUC_DOMAIN:-internal-muc.meet.jitsi}
+            - XMPP_SERVER=${XMPP_SERVER:-xmpp.meet.jitsi}
+            - JVB_AUTH_USER=${JVB_AUTH_USER:-jvb}
             - JVB_AUTH_PASSWORD
-            - JVB_BREWERY_MUC
-            - JVB_PORT
-            - JVB_TCP_HARVESTER_DISABLED
+            - JVB_BREWERY_MUC=${JVB_BREWERY_MUC:-jvbbrewery}
+            - JVB_PORT=${JVB_PORT:-10000}
+            - JVB_TCP_HARVESTER_DISABLED=${JVB_TCP_HARVESTER_DISABLED:-true}
             - JVB_TCP_PORT
             - JVB_TCP_MAPPED_PORT
-            - JVB_STUN_SERVERS
-            - JVB_ENABLE_APIS
+            - JVB_STUN_SERVERS=${TURN_PUBLIC_IP}:${TURN_PORT:-5349}
+            - JVB_ENABLE_APIS=${JVB_ENABLE_APIS:-rest}
             - JVB_WS_DOMAIN
             - JVB_WS_SERVER_ID
             - PUBLIC_URL
-            - TZ
+            - TZ=${TZ:-UTC}
             - JVB_LOG_LEVEL
         depends_on:
             - prosody
@@ -270,14 +263,36 @@ services:
         environment:
             - UVS_ACCESS_TOKEN
             - UVS_HOMESERVER_URL
-            - UVS_LISTEN_ADDRESS
-            - UVS_PORT
-            - UVS_LOG_LEVEL
-            - UVS_OPENID_VERIFY_ANY_HOMESERVER            
+            - UVS_LISTEN_ADDRESS=${UVS_LISTEN_ADDRESS:-0.0.0.0}
+            - UVS_PORT=${UVS_PORT:-3000}
+            - UVS_LOG_LEVEL=${UVS_LOG_LEVEL:-info}
+            - UVS_OPENID_VERIFY_ANY_HOMESERVER=${UVS_OPENID_VERIFY_ANY_HOMESERVER:-false}            
         networks:
             meet.jitsi: 
                 aliases:
                     - uvs.meet.jitsi
+
+    turn:
+        image: ${COTURN_IMAGE:-jitsi/coturn:lnrw-stable-5390-3}
+        restart: always
+        ports:
+            - '${TURN_PORT:-5349}:${TURN_PORT:-5349}/tcp'
+            - '${TURN_PORT:-5349}:${TURN_PORT:-5349}/udp'
+            - '${TURN_RTP_MIN:-16000}-${TURN_RTP_MAX:-17000}:${TURN_RTP_MIN:-16000}-${TURN_RTP_MAX:-17000}/udp'
+        environment:
+            - TURN_SECRET
+            - TURN_REALM
+            - TURN_PUBLIC_IP
+            - TURN_PORT=${TURN_PORT:-5349}
+            - TURN_TRANSPORT
+            - TURN_RTP_MIN=${TURN_RTP_MIN:-16000}
+            - TURN_RTP_MAX=${TURN_RTP_MAX:-17000}
+            - TURN_ADMIN_ENABLE
+            - TURN_ADMIN_USER
+            - TURN_ADMIN_SECRET
+            - TURN_ADMIN_PORT
+        networks:
+            meet.jitsi:
 
 # Custom network so all services can communicate using a FQDN
 networks:
