@@ -171,8 +171,8 @@ services:
             - UVS_BASE_URL=${UVS_BASE_URL:-http://uvs.meet.jitsi:3000}
             - UVS_SYNC_POWER_LEVELS=${UVS_SYNC_POWER_LEVELS:-1}
             - TURNCREDENTIALS_SECRET=${TURN_SECRET}
-            - TURNCREDENTIALS_HOST=${TURN_PUBLIC_IP}
-            - TURNCREDENTIALS_PORT=${TURN_PORT:-5349}
+            - TURNCREDENTIALS_HOST=${TURN_HOST}
+            - TURNCREDENTIALS_PORT=${TURN_TLS_PORT:-5349}
         depends_on:
             - matrix-user-verification-service
         networks:
@@ -243,7 +243,7 @@ services:
             - JVB_TCP_HARVESTER_DISABLED=${JVB_TCP_HARVESTER_DISABLED:-true}
             - JVB_TCP_PORT
             - JVB_TCP_MAPPED_PORT
-            - JVB_STUN_SERVERS=${TURN_PUBLIC_IP}:${TURN_PORT:-5349}
+            - JVB_STUN_SERVERS=${TURN_HOST}:${TURN_TLS_PORT:-5349}
             - JVB_ENABLE_APIS=${JVB_ENABLE_APIS:-rest}
             - JVB_WS_DOMAIN
             - JVB_WS_SERVER_ID
@@ -277,14 +277,26 @@ services:
         image: ${COTURN_IMAGE:-jitsi/coturn:lnrw-stable-5390-3}
         restart: always
         ports:
-            - '${TURN_PORT:-5349}:${TURN_PORT:-5349}/tcp'
-            - '${TURN_PORT:-5349}:${TURN_PORT:-5349}/udp'
+            - '${TURN_PORT:-3478}:${TURN_PORT:-3478}/tcp'
+            - '${TURN_PORT:-3478}:${TURN_PORT:-3478}/udp'
+            - '${TURN_TLS_PORT:-5349}:${TURN_TLS_PORT:-5349}/tcp'
+            - '${TURN_TLS_PORT:-5349}:${TURN_TLS_PORT:-5349}/udp'
+            - '${TURN_ALT_PORT:-3479}:${TURN_ALT_PORT:-3479}/tcp'
+            - '${TURN_ALT_PORT:-3479}:${TURN_ALT_PORT:-3479}/udp'
+            - '${TURN_ALT_TLS_PORT:-5350}:${TURN_ALT_TLS_PORT:-5350}/tcp'
+            - '${TURN_ALT_TLS_PORT:-5350}:${TURN_ALT_TLS_PORT:-5350}/udp'
             - '${TURN_RTP_MIN:-16000}-${TURN_RTP_MAX:-17000}:${TURN_RTP_MIN:-16000}-${TURN_RTP_MAX:-17000}/udp'
+        volumes:
+            - ${SSL_CERT}:/config/cert.crt
+            - ${SSL_PRIVATE_KEY}:/config/cert.key
         environment:
             - TURN_SECRET
-            - TURN_REALM
+            - TURN_REALM=${TURN_HOST}
             - TURN_PUBLIC_IP
-            - TURN_PORT=${TURN_PORT:-5349}
+            - TURN_PORT=${TURN_TLS_PORT:-3478}
+            - TURN_ALT_PORT=${TURN_ALT_TLS_PORT:-3479}
+            - TURN_TLS_PORT=${TURN_TLS_PORT:-5349}
+            - TURN_ALT_TLS_PORT=${TURN_ALT_TLS_PORT:-5350}
             - TURN_TRANSPORT
             - TURN_RTP_MIN=${TURN_RTP_MIN:-16000}
             - TURN_RTP_MAX=${TURN_RTP_MAX:-17000}

@@ -7,10 +7,10 @@
 exec turnserver -c /config/turnserver.conf \
 --verbose \
 --prod \
---listening-port=${TURN_PORT:-5349} \
---tls-listening-port=${TURN_PORT:-5349} \
---alt-listening-port=${TURN_PORT:-5349} \
---alt-tls-listening-port=${TURN_PORT:-5349} \
+--listening-port=${TURN_PORT:-3478} \
+--tls-listening-port=${TURN_TLS_PORT:-5349} \
+--alt-listening-port=${TURN_ALT_PORT:-3479} \
+--alt-tls-listening-port=${TURN_ALT_TLS_PORT:-5350} \
 --external-ip=${TURN_PUBLIC_IP} \
 --static-auth-secret=${TURN_SECRET} \
 --realm=${TURN_REALM} \
