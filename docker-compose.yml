@@ -77,18 +77,18 @@ services:
             - NGINX_WORKER_PROCESSES
             - NGINX_WORKER_CONNECTIONS
             - PEOPLE_SEARCH_URL
-            - RESOLUTION
+            - RESOLUTION=${RESOLUTION:-480}
             - RESOLUTION_MIN
-            - RESOLUTION_WIDTH
+            - RESOLUTION_WIDTH=${RESOLUTION_WIDTH:-852}
             - RESOLUTION_WIDTH_MIN
             - START_AUDIO_ONLY
-            - START_AUDIO_MUTED
-            - DISABLE_AUDIO_LEVELS
+            - START_AUDIO_MUTED=${START_AUDIO_MUTED:-3}
+            - DISABLE_AUDIO_LEVELS=${DISABLE_AUDIO_LEVELS:-true}
             - ENABLE_NOISY_MIC_DETECTION
             - START_BITRATE
             - DESKTOP_SHARING_FRAMERATE_MIN
             - DESKTOP_SHARING_FRAMERATE_MAX
-            - START_VIDEO_MUTED
+            - START_VIDEO_MUTED=${START_VIDEO_MUTED:-3}
             - TESTING_CAP_SCREENSHARE_BITRATE
             - TESTING_OCTO_PROBABILITY
             - XMPP_AUTH_DOMAIN=${XMPP_AUTH_DOMAIN:-auth.meet.jitsi}
@@ -98,9 +98,10 @@ services:
             - XMPP_MUC_DOMAIN=${XMPP_MUC_DOMAIN:-muc.meet.jitsi}
             - XMPP_RECORDER_DOMAIN=${XMPP_RECORDER_DOMAIN:-recorder.meet.jitsi}
             - TOKEN_AUTH_URL
-            - DISABLE_THIRD_PARTY_REQUESTS
-            - DISABLED_TOOLBAR_BUTTONS
-            - DISABLE_VIDEO_BACKGROUND
+            - DISABLE_THIRD_PARTY_REQUESTS=${DISABLE_THIRD_PARTY_REQUESTS:-1}
+            - DISABLED_TOOLBAR_BUTTONS=${DISABLED_TOOLBAR_BUTTONS:-embedmeeting,recording,livestreaming,sharedvideo,invite,feedback,download,videobackgroundblur}
+            - DISABLE_VIDEO_BACKGROUND=${DISABLE_VIDEO_BACKGROUND:-1}
+            - HIDE_INVITE_MORE_HEADER=${HIDE_INVITE_MORE_HEADER:-1}
         networks:
             meet.jitsi:
                 aliases:
@@ -248,7 +249,7 @@ services:
             - JVB_WS_SERVER_ID
             - PUBLIC_URL
             - TZ=${TZ:-UTC}
-            - JVB_LOG_LEVEL
+            - JVB_LOG_LEVEL=${JVB_LOG_LEVEL:-warning}
         depends_on:
             - prosody
         networks:
