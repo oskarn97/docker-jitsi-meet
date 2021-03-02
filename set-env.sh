@@ -1,9 +1,19 @@
-#!/bin/sh
+#!/bin/bash
 
-if [ $# -ne 7 ]; then
-   echo "Usage:   $(basename $0) <public hostname> <public address> <homeserver name> <school number> <synapse admin token> <static turn secret> <ssl cert path> <ssl private key path>" 1>&2
-   echo "Example: $(basename $0) 000016.logineonrw-2020.de 18.185.97.18 000016.nogineo.de 000016 ABCDEFGHIJKLMNOPQRSTUVWXYZB /root/cert.crt /root/cert.key"
-   exit 1
+if [ $# -gt 0 ]; then
+   if [ $# -ne 7 ]; then
+      echo "Usage:   $(basename $0) [<public hostname> <public address> <homeserver name> <school number> <synapse admin token> <static turn secret> <ssl cert path> <ssl private key path>]" 1>&2
+      echo "Example: $(basename $0) 000016.logineonrw-2020.de 18.185.97.18 000016.nogineo.de 000016 ABCDEFGHIJKLMNOPQRSTUVWXYZB /root/cert.crt /root/cert.key"
+      exit 1
+   fi
+
+   TURN_HOST=$1
+   TURN_PUBLIC_IP=$2
+   UVS_HOMESERVER_URL=https://$3
+   UVS_ACCESS_TOKEN=$5
+   SSL_CERT=$6
+   SSL_PRIVATE_KEY=$6
+   SCHOOL_NO=$7
 fi
 
 function random_key() {
@@ -27,12 +37,10 @@ set_env_value JIGASI_XMPP_PASSWORD $(random_key)
 set_env_value JIBRI_RECORDER_PASSWORD $(random_key)
 set_env_value JIBRI_XMPP_PASSWORD $(random_key)
 set_env_value TURN_SECRET $(random_key)
-set_env_value TURN_HOST $1
-set_env_value TURN_PUBLIC_IP $2
-set_env_value UVS_HOMESERVER_URL https://$3
-set_env_value UVS_ACCESS_TOKEN $5
-set_env_value SSL_CERT $6
-set_env_value SSL_PRIVATE_KEY $6
-set_env_value SCHOOL_NO $7
-
-
+set_env_value TURN_HOST $TURN_HOST
+set_env_value TURN_PUBLIC_IP $TURN_PUBLIC_IP
+set_env_value UVS_HOMESERVER_URL $UVS_HOMESERVER_URL
+set_env_value UVS_ACCESS_TOKEN $UVS_ACCESS_TOKEN
+set_env_value SSL_CERT $SSL_CERT
+set_env_value SSL_PRIVATE_KEY $SSL_PRIVATE_KEY
+set_env_value SCHOOL_NO $SCHOOL_NO
