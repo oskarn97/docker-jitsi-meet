@@ -23,9 +23,15 @@ $(addprefix build_,$(JITSI_SERVICES)):
 tag:
 	docker tag $(JITSI_REPO)/$(JITSI_SERVICE):latest $(JITSI_REPO)/$(JITSI_SERVICE):$(JITSI_BUILD)
 
+custom-tag:
+	docker tag $(JITSI_REPO)/$(JITSI_SERVICE):latest $(JITSI_CUSTOM_REPO_PREFIX)$(JITSI_SERVICE):$(JITSI_BUILD)
+
 push:
 	docker push $(JITSI_REPO)/$(JITSI_SERVICE):latest
 	docker push $(JITSI_REPO)/$(JITSI_SERVICE):$(JITSI_BUILD)
+
+custom-push:
+	docker push $(JITSI_CUSTOM_REPO_PREFIX)$(JITSI_SERVICE):$(JITSI_BUILD)
 
 %-all:
 	@$(foreach SERVICE, $(JITSI_SERVICES), $(MAKE) --no-print-directory JITSI_SERVICE=$(SERVICE) $(subst -all,;,$@))
