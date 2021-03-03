@@ -1,6 +1,11 @@
 version: '3'
 
 services:
+    jvb:
+        environment:
+            - JVB_ENABLE_APIS=${JVB_ENABLE_APIS:-rest,colibri}
+
+
     metrics:
         image: ${JITSI_CUSTOM_REPO_PREFIX:-jitsi/}metrics:latest
         restart: always
