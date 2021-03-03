@@ -3,7 +3,7 @@ version: '3'
 services:
     # Frontend
     web:
-        image: ${JITSI_IMAGE:-jitsi/web:lnrw-stable-5390-3}
+        image: ${JITSI_IMAGE:-jitsi/web}:lnrw-stable-5390-3
         restart: ${RESTART_POLICY:-unless-stopped}
         ports:
             - '${HTTP_PORT:-80}:80'
@@ -109,7 +109,7 @@ services:
 
     # XMPP server
     prosody:
-        image: ${PROSODY_IMAGE:-jitsi/prosody:lnrw-stable-5390-3}
+        image: ${PROSODY_IMAGE:-jitsi/prosody}:lnrw-stable-5390-3
         restart: ${RESTART_POLICY:-unless-stopped}
         expose:
             - '5222'
@@ -226,7 +226,7 @@ services:
 
     # Video bridge
     jvb:
-        image: ${JVB_IMAGE:-jitsi/jvb:lnrw-stable-5390-3}
+        image: ${JVB_IMAGE:-jitsi/jvb}:lnrw-stable-5390-3
         restart: ${RESTART_POLICY:-unless-stopped}
         ports:
             - '${JVB_PORT:-10000}:${JVB_PORT:-10000}/udp'
@@ -274,7 +274,7 @@ services:
                     - uvs.meet.jitsi
 
     turn:
-        image: ${COTURN_IMAGE:-jitsi/coturn:lnrw-stable-5390-3}
+        image: ${COTURN_IMAGE:-jitsi/coturn}:lnrw-stable-5390-3
         restart: always
         ports:
             - '${TURN_PORT:-3478}:${TURN_PORT:-3478}/tcp'
