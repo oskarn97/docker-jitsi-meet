@@ -2,7 +2,7 @@ version: '3'
 
 services:
     metrics:
-        image: ${METRICS_IMAGE}
+        image: ${JITSI_CUSTOM_REPO_PREFIX:-jitsi/}metrics:latest
         restart: always
         environment:
             - SCHOOL_ID
