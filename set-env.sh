@@ -46,3 +46,4 @@ set_env_value SSL_PRIVATE_KEY $SSL_PRIVATE_KEY
 set_env_value SCHOOL_NO $SCHOOL_NO
 
 [ -n "$JITSI_CUSTOM_REPO_PREFIX" ] && set_env_value JITSI_CUSTOM_REPO_PREFIX $JITSI_CUSTOM_REPO_PREFIX 
+[ -n "$STAGE" ] && set_env_value STAGE $STAGE 

@@ -10,7 +10,8 @@ services:
         image: ${JITSI_CUSTOM_REPO_PREFIX:-jitsi/}metrics:latest
         restart: always
         environment:
-            - SCHOOL_ID
+            - SCHOOL_ID=${SCHOOL_NO}
+            - STAGE
         depends_on: 
             - jvb
         networks:
